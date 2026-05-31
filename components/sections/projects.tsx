@@ -450,7 +450,7 @@ export function Projects() {
                       "clamp(48px,6vw,88px)",
                   }}
                 >
-                  Things I've{" "}
+                  Things I&apos;ve{" "}
                   <span
                     style={{
                       color:

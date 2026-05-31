@@ -78,10 +78,6 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
     setP(Math.max(0, Math.min(1, mapped)));
   });
 
-  // Phase 1 (p 0→0.38): portrait shrinks from large to compact
-  const shrinkP       = Math.min(1, p / 0.38);
-  const portraitWidth = Math.round(440 - shrinkP * 220); // 440px → 220px
-
   // Phase 2 (p 0.22→0.42): code block fades in
   const codeOpacity   = Math.min(1, Math.max(0, (p - 0.22) * 5));
 
@@ -90,7 +86,6 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
 
   const labelOpacity     = Math.min(1, p * 5);
   const marqueeShift     = p * -45;
-  const strokeDashoffset = SLASH_LENGTH * (1 - shrinkP);
   const captionOpacity   = Math.min(1, Math.max(0, (p - 0.68) * 4));
 
   // Focal renders into a 100vh container provided by TransitionZone.
