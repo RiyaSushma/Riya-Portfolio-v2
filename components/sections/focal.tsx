@@ -5,7 +5,6 @@ import { MotionValue, useMotionValueEvent } from "framer-motion";
 
 const MARQUEE_ROW_1 = "BUILDING · THE WEB · SHIPPING FAST · ML TINKERER · ";
 const MARQUEE_ROW_2 = "FULL-STACK DEV · CLEAN CODE · OPEN TO WORK · NEW DELHI · ";
-const SLASH_LENGTH = 600;
 
 type Token = { text: string; color: string };
 
