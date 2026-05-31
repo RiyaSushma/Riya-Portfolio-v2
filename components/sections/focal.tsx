@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { MotionValue, useMotionValueEvent } from "framer-motion";
 
 const MARQUEE_ROW_1 = "BUILDING · THE WEB · SHIPPING FAST · ML TINKERER · ";
