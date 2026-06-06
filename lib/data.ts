@@ -13,8 +13,8 @@ export const hero = {
   tagline: "1.5+ years shipping SaaS platforms and AI-powered features with Angular, TypeScript, Node.js, and React.",
   location: "Noida, India",
   email: "riyasushma2019@gmail.com",
-  github: "https://github.com", // TODO: replace with actual GitHub profile URL
-  linkedin: "https://linkedin.com", // TODO: replace with actual LinkedIn profile URL
+  github: "https://github.com/RiyaSushma",
+  linkedin: "https://www.linkedin.com/in/riya-051211244/",
   available: true,
 };
 
