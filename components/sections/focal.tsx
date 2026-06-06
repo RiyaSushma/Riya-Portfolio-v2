@@ -2,73 +2,11 @@
 
 import { useState } from "react";
 import { MotionValue, useMotionValueEvent } from "framer-motion";
+import { TOKEN_RANGES, TOTAL_CHARS, LINE_COUNT } from "@/lib/constants";
 
-const MARQUEE_ROW_1 = "BUILDING · THE WEB · SHIPPING FAST · ML TINKERER · ";
+const MARQUEE_ROW_1 = "BUILDING · THE WEB · SHIPPING FAST · ML ENGINEER · ";
 const MARQUEE_ROW_2 = "FULL-STACK DEV · CLEAN CODE · OPEN TO WORK · NEW DELHI · ";
 
-type Token = { text: string; color: string };
-
-const CODE_TOKENS: Token[] = [
-  { text: "const ", color: "#a78bfa" },
-  { text: "riya", color: "#eeeaff" },
-  { text: " = {", color: "#c4badb" },
-  { text: "\n", color: "" },
-  { text: "  role:", color: "#f472b6" },
-  { text: "      ", color: "" },
-  { text: '"Full-Stack Dev + ML tinkerer"', color: "#86efac" },
-  { text: ",", color: "#6b7280" },
-  { text: "\n", color: "" },
-  { text: "  education:", color: "#f472b6" },
-  { text: " ", color: "" },
-  { text: '"B.Tech, Computer Science"', color: "#86efac" },
-  { text: ",", color: "#6b7280" },
-  { text: "\n", color: "" },
-  { text: "  stack:", color: "#f472b6" },
-  { text: "     [", color: "#c4badb" },
-  { text: '"Angular"', color: "#fbbf24" },
-  { text: ", ", color: "#6b7280" },
-  { text: '"React"', color: "#fbbf24" },
-  { text: ", ", color: "#6b7280" },
-  { text: '"Python"', color: "#fbbf24" },
-  { text: ", ", color: "#6b7280" },
-  { text: '"Node"', color: "#fbbf24" },
-  { text: "]", color: "#c4badb" },
-  { text: ",", color: "#6b7280" },
-  { text: "\n", color: "" },
-  { text: "  loves:", color: "#f472b6" },
-  { text: "     [", color: "#c4badb" },
-  { text: '"clean APIs"', color: "#fbbf24" },
-  { text: ", ", color: "#6b7280" },
-  { text: '"great UX"', color: "#fbbf24" },
-  { text: ", ", color: "#6b7280" },
-  { text: '"fast UIs"', color: "#fbbf24" },
-  { text: "]", color: "#c4badb" },
-  { text: ",", color: "#6b7280" },
-  { text: "\n", color: "" },
-  { text: "  currently:", color: "#f472b6" },
-  { text: " ", color: "" },
-  { text: '"shipping & job-hunting"', color: "#86efac" },
-  { text: ",", color: "#6b7280" },
-  { text: "\n", color: "" },
-  { text: "};", color: "#c4badb" },
-];
-
-const TOKEN_RANGES = (() => {
-  let pos = 0;
-  return CODE_TOKENS.map((t) => {
-    const start = pos;
-    const end = pos + t.text.length;
-    pos = end;
-    return { ...t, start, end };
-  });
-})();
-
-const TOTAL_CHARS = TOKEN_RANGES[TOKEN_RANGES.length - 1].end;
-const LINE_COUNT = 7;
-
-// Focal receives scrollYProgress from TransitionZone (the shared scroll driver).
-// It maps scrollYProgress [0.30 → 1.0] to its internal p [0 → 1].
-// This means Focal only starts animating AFTER the Hero has fully shrunk and exited.
 export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
   const [p, setP] = useState(0);
 
@@ -77,18 +15,12 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
     setP(Math.max(0, Math.min(1, mapped)));
   });
 
-  // Phase 2 (p 0.22→0.42): code block fades in
   const codeOpacity   = Math.min(1, Math.max(0, (p - 0.22) * 5));
-
-  // Phase 3 (p 0.42→1.0): code types
   const charCount     = Math.floor(Math.max(0, (p - 0.42) / 0.58) * TOTAL_CHARS);
+  const labelOpacity  = Math.min(1, p * 5);
+  const marqueeShift  = p * -45;
+  const captionOpacity = Math.min(1, Math.max(0, (p - 0.68) * 4));
 
-  const labelOpacity     = Math.min(1, p * 5);
-  const marqueeShift     = p * -45;
-  const captionOpacity   = Math.min(1, Math.max(0, (p - 0.68) * 4));
-
-  // Focal renders into a 100vh container provided by TransitionZone.
-  // No outer 350vh wrapper here — TransitionZone owns the scroll space.
   return (
     <div
       style={{
@@ -102,85 +34,63 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
         background: "var(--bg)",
       }}
     >
-      {/* ── Marquee row 1 — scrolls LEFT ── */}
+      {/* Marquee row 1 — scrolls LEFT */}
       <div
         style={{
-          position: "absolute",
-          top: "36%",
-          left: 0,
-          right: 0,
-          overflow: "hidden",
-          pointerEvents: "none",
-          zIndex: 1,
+          position: "absolute", top: "36%", left: 0, right: 0,
+          overflow: "hidden", pointerEvents: "none", zIndex: 1,
           opacity: Math.min(1, p * 4),
         }}
+        aria-hidden="true"
       >
         <div
           className="font-serif"
           style={{
-            fontSize: "clamp(64px, 9vw, 120px)",
-            whiteSpace: "nowrap",
+            fontSize: "clamp(64px, 9vw, 120px)", whiteSpace: "nowrap",
             transform: `translateX(${marqueeShift}vw)`,
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
-            userSelect: "none",
+            letterSpacing: "-0.02em", lineHeight: 1, userSelect: "none",
             willChange: "transform",
             background: "linear-gradient(135deg, rgba(167,139,250,0.55) 0%, rgba(236,72,153,0.48) 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           }}
         >
           {MARQUEE_ROW_1.repeat(5)}
         </div>
       </div>
 
-      {/* ── Marquee row 2 — scrolls RIGHT (opposite direction) ── */}
+      {/* Marquee row 2 — scrolls RIGHT */}
       <div
         style={{
-          position: "absolute",
-          top: "54%",
-          left: 0,
-          right: 0,
-          overflow: "hidden",
-          pointerEvents: "none",
-          zIndex: 1,
+          position: "absolute", top: "54%", left: 0, right: 0,
+          overflow: "hidden", pointerEvents: "none", zIndex: 1,
           opacity: Math.min(1, p * 4),
         }}
+        aria-hidden="true"
       >
         <div
           className="font-serif"
           style={{
-            fontSize: "clamp(64px, 9vw, 120px)",
-            whiteSpace: "nowrap",
+            fontSize: "clamp(64px, 9vw, 120px)", whiteSpace: "nowrap",
             transform: `translateX(${-marqueeShift}vw)`,
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
-            userSelect: "none",
+            letterSpacing: "-0.02em", lineHeight: 1, userSelect: "none",
             willChange: "transform",
             background: "linear-gradient(135deg, rgba(236,72,153,0.48) 0%, rgba(167,139,250,0.55) 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           }}
         >
           {MARQUEE_ROW_2.repeat(5)}
         </div>
       </div>
 
-      {/* ── Wave line background ── */}
+      {/* Wave line background */}
       <svg
         style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-          zIndex: 1,
-          opacity: Math.min(1, p * 4),
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          pointerEvents: "none", zIndex: 1, opacity: Math.min(1, p * 4),
         }}
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
       >
         <g stroke="rgba(120,80,210,0.18)" strokeWidth="1" fill="none">
           <path d="M -100,100 Q 400,20  780,180 Q 1100,340 1540,220" />
@@ -197,119 +107,41 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
         </g>
       </svg>
 
-      {/* ── Right-side pink glow ── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(ellipse 55% 75% at 96% 52%, rgba(180,40,110,0.28) 0%, transparent 65%)",
-          pointerEvents: "none",
-          zIndex: 2,
-        }}
-      />
+      {/* Ambient glows */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 55% 75% at 96% 52%, rgba(180,40,110,0.28) 0%, transparent 65%)", pointerEvents: "none", zIndex: 2 }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 40% 60% at 2% 50%, rgba(80,40,160,0.18) 0%, transparent 70%)", pointerEvents: "none", zIndex: 2 }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 50% 60% at center, transparent 0%, rgba(5,5,8,0.55) 100%)", pointerEvents: "none", zIndex: 3 }} />
 
-      {/* ── Left-side violet ambient ── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(ellipse 40% 60% at 2% 50%, rgba(80,40,160,0.18) 0%, transparent 70%)",
-          pointerEvents: "none",
-          zIndex: 2,
-        }}
-      />
-
-      {/* ── Center vignette ── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(ellipse 50% 60% at center, transparent 0%, rgba(5,5,8,0.55) 100%)",
-          pointerEvents: "none",
-          zIndex: 3,
-        }}
-      />
-
-      {/* ── Center composition ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "20px",
-        }}
-      >
+      {/* Center composition */}
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
 
         {/* Scroll-driven code block */}
         <div style={{ opacity: codeOpacity, willChange: "opacity" }}>
           <div
             style={{
-              width: "clamp(280px, 34vw, 420px)",
-              borderRadius: "14px",
-              overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.07)",
-              background: "#080611",
+              width: "clamp(280px, 34vw, 420px)", borderRadius: "14px",
+              overflow: "hidden", border: "1px solid rgba(255,255,255,0.07)", background: "#080611",
             }}
+            role="img"
+            aria-label="Code snippet introducing Riya"
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 16px",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                background: "#0c0918",
-              }}
-            >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#0c0918" }}>
               <span style={{ width: "11px", height: "11px", borderRadius: "50%", background: "#ff5f57", display: "inline-block" }} />
               <span style={{ width: "11px", height: "11px", borderRadius: "50%", background: "#febc2e", display: "inline-block" }} />
               <span style={{ width: "11px", height: "11px", borderRadius: "50%", background: "#28c840", display: "inline-block" }} />
-              <span
-                style={{
-                  marginLeft: "14px",
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  fontSize: "11px",
-                  color: "var(--muted)",
-                  letterSpacing: "0.06em",
-                }}
-              >
+              <span style={{ marginLeft: "14px", fontFamily: "var(--font-jetbrains-mono)", fontSize: "11px", color: "var(--muted)", letterSpacing: "0.06em" }}>
                 riya.ts
               </span>
             </div>
 
             <div style={{ padding: "16px 20px" }}>
-              <pre
-                style={{
-                  fontFamily: "var(--font-jetbrains-mono), ui-monospace, monospace",
-                  fontSize: "12.5px",
-                  lineHeight: "1.85",
-                  margin: 0,
-                }}
-              >
+              <pre style={{ fontFamily: "var(--font-jetbrains-mono), ui-monospace, monospace", fontSize: "12.5px", lineHeight: "1.85", margin: 0 }}>
                 <div style={{ display: "flex" }}>
-                  <div
-                    style={{
-                      paddingRight: "16px",
-                      marginRight: "16px",
-                      borderRight: "1px solid rgba(255,255,255,0.06)",
-                      color: "#3d3553",
-                      minWidth: "18px",
-                      textAlign: "right",
-                      userSelect: "none",
-                      lineHeight: "1.85",
-                      flexShrink: 0,
-                    }}
-                  >
+                  <div style={{ paddingRight: "16px", marginRight: "16px", borderRight: "1px solid rgba(255,255,255,0.06)", color: "#3d3553", minWidth: "18px", textAlign: "right", userSelect: "none", lineHeight: "1.85", flexShrink: 0 }}>
                     {Array.from({ length: LINE_COUNT }, (_, i) => (
                       <div key={i}>{i + 1}</div>
                     ))}
                   </div>
-
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {TOKEN_RANGES.map((token, i) => {
                       if (charCount <= token.start) return null;
@@ -320,17 +152,12 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
                         </span>
                       );
                     })}
-
                     {charCount > 0 && charCount < TOTAL_CHARS && (
                       <span
                         style={{
-                          display: "inline-block",
-                          width: "2px",
-                          height: "0.85em",
-                          background: "var(--violet)",
-                          borderRadius: "1px",
-                          verticalAlign: "middle",
-                          marginLeft: "1px",
+                          display: "inline-block", width: "2px", height: "0.85em",
+                          background: "var(--violet)", borderRadius: "1px",
+                          verticalAlign: "middle", marginLeft: "1px",
                           animation: "cursorBlink 0.8s steps(1) infinite",
                         }}
                       />
@@ -342,38 +169,27 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
           </div>
         </div>
 
-        {/* Bottom labels */}
+        {/* Caption — replaced "this is me." with actionable statement */}
         <div
           style={{
-            textAlign: "center",
-            opacity: captionOpacity,
-            transform: `translateY(${(1 - captionOpacity) * 8}px)`,
-            transition: "none",
+            textAlign: "center", opacity: captionOpacity,
+            transform: `translateY(${(1 - captionOpacity) * 8}px)`, transition: "none",
           }}
         >
           <p
             className="font-serif"
             style={{
-              fontSize: "clamp(18px, 2.2vw, 26px)",
-              fontStyle: "italic",
-              color: "var(--ink)",
-              letterSpacing: "-0.01em",
-              marginBottom: "10px",
+              fontSize: "clamp(18px, 2.2vw, 26px)", fontStyle: "italic",
+              color: "var(--ink)", letterSpacing: "-0.01em", marginBottom: "10px",
             }}
           >
-            — this is me.
+            — open to full-time roles.
           </p>
           <p
             style={{
-              fontFamily: "var(--font-jetbrains-mono)",
-              fontSize: "10px",
-              color: "var(--muted)",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px",
+              fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px",
+              color: "var(--muted)", letterSpacing: "0.22em", textTransform: "uppercase",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
             }}
           >
             <span>Full-Stack Dev</span>
@@ -386,74 +202,22 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
       </div>
 
       {/* Top-left label */}
-      <div
-        style={{
-          position: "absolute",
-          top: "36px",
-          left: "44px",
-          zIndex: 15,
-          opacity: labelOpacity,
-          transform: `translateX(${(1 - Math.min(1, labelOpacity)) * -20}px)`,
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-jetbrains-mono)",
-            fontSize: "10px",
-            color: "var(--muted-2)",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-          }}
-        >
+      <div style={{ position: "absolute", top: "36px", left: "44px", zIndex: 15, opacity: labelOpacity, transform: `translateX(${(1 - Math.min(1, labelOpacity)) * -20}px)` }}>
+        <p style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px", color: "var(--muted-2)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           R / 01 — In Focus
         </p>
       </div>
 
       {/* Top-right label */}
-      <div
-        style={{
-          position: "absolute",
-          top: "36px",
-          right: "44px",
-          zIndex: 15,
-          opacity: labelOpacity,
-          transform: `translateX(${(1 - Math.min(1, labelOpacity)) * 20}px)`,
-          textAlign: "right",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-jetbrains-mono)",
-            fontSize: "10px",
-            color: "var(--muted-2)",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-          }}
-        >
+      <div style={{ position: "absolute", top: "36px", right: "44px", zIndex: 15, opacity: labelOpacity, transform: `translateX(${(1 - Math.min(1, labelOpacity)) * 20}px)`, textAlign: "right" }}>
+        <p style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px", color: "var(--muted-2)", letterSpacing: "0.2em", textTransform: "uppercase" }}>
           Portfolio &apos;26
         </p>
       </div>
 
       {/* Bottom-right label */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "36px",
-          right: "44px",
-          zIndex: 15,
-          opacity: captionOpacity,
-          textAlign: "right",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-jetbrains-mono)",
-            fontSize: "10px",
-            color: "var(--muted-2)",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-          }}
-        >
+      <div style={{ position: "absolute", bottom: "36px", right: "44px", zIndex: 15, opacity: captionOpacity, textAlign: "right" }}>
+        <p style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "10px", color: "var(--muted-2)", letterSpacing: "0.18em", textTransform: "uppercase" }}>
           Riya — Associate SWE
         </p>
       </div>
@@ -461,44 +225,18 @@ export function Focal({ scrollYProgress }: { scrollYProgress: MotionValue<number
       {/* Scroll progress bar */}
       <div
         style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          height: "2px",
+          position: "absolute", bottom: 0, left: 0, height: "2px",
           width: `${p * 100}%`,
           background: "linear-gradient(90deg, #a78bfa, #ec4899)",
-          zIndex: 20,
-          willChange: "width",
+          zIndex: 20, willChange: "width",
         }}
+        role="progressbar"
+        aria-hidden="true"
       />
 
       {/* Side lines */}
-      <div
-        style={{
-          position: "absolute",
-          left: "44px",
-          top: "60px",
-          bottom: "60px",
-          width: "1px",
-          background:
-            "linear-gradient(to bottom, transparent, rgba(167,139,250,0.15) 30%, rgba(167,139,250,0.15) 70%, transparent)",
-          opacity: labelOpacity,
-          zIndex: 15,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          right: "44px",
-          top: "60px",
-          bottom: "60px",
-          width: "1px",
-          background:
-            "linear-gradient(to bottom, transparent, rgba(236,72,153,0.15) 30%, rgba(236,72,153,0.15) 70%, transparent)",
-          opacity: labelOpacity,
-          zIndex: 15,
-        }}
-      />
+      <div style={{ position: "absolute", left: "44px", top: "60px", bottom: "60px", width: "1px", background: "linear-gradient(to bottom, transparent, rgba(167,139,250,0.15) 30%, rgba(167,139,250,0.15) 70%, transparent)", opacity: labelOpacity, zIndex: 15 }} />
+      <div style={{ position: "absolute", right: "44px", top: "60px", bottom: "60px", width: "1px", background: "linear-gradient(to bottom, transparent, rgba(236,72,153,0.15) 30%, rgba(236,72,153,0.15) 70%, transparent)", opacity: labelOpacity, zIndex: 15 }} />
     </div>
   );
 }

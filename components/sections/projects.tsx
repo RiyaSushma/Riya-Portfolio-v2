@@ -13,8 +13,8 @@ import { SectionLabel } from "@/components/ui/section-label";
 import { PinContainer } from "@/components/ui/3d-pin";
 
 const CONTAINER_WIDTH = 1320;
-const CARD_WIDTH = 420;
-const GAP = 20;
+const CARD_WIDTH = 320;
+const GAP = 16;
 
 const PROJECTS = [
   {
@@ -29,7 +29,7 @@ const PROJECTS = [
     stack: ["Python", "Flask", "FAISS", "Docker", "LLM APIs"],
     accent: "#a78bfa",
     github: "#",
-    image: "/projects/movie_recommendation.png",
+    image: "/projects/rag-analysis-tool.png",
   },
   {
     num: "02",
@@ -43,7 +43,7 @@ const PROJECTS = [
     stack: ["React", "Node.js", "Express", "MongoDB", "Redux"],
     accent: "#f472b6",
     github: "#",
-    image: "/projects/insta-clone.png",
+    image: "/projects/food-ordering-app.png",
   },
   {
     num: "03",
@@ -71,7 +71,7 @@ const PROJECTS = [
     stack: ["JavaScript", "Canvas API", "Algorithms"],
     accent: "#2dd4bf",
     github: "#",
-    image: "/projects/text-sentiment-analysis-ss.png",
+    image: "/projects/dsa-visualizer.png",
   },
 ];
 
@@ -91,16 +91,13 @@ function ProjectModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label={project.title}
         style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.80)",
-          zIndex: 200,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "16px",
-          backdropFilter: "blur(8px)",
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.80)",
+          zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "16px", backdropFilter: "blur(8px)",
         }}
       >
         <motion.div
@@ -115,16 +112,14 @@ function ProjectModal({
             border: `1px solid ${project.accent}30`,
             borderRadius: "20px",
             padding: "clamp(24px, 4vw, 36px)",
-            maxWidth: "640px",
-            width: "100%",
-            position: "relative",
+            maxWidth: "640px", width: "100%", position: "relative",
             boxShadow: `0 40px 100px -20px ${project.accent}28`,
-            maxHeight: "90vh",
-            overflowY: "auto",
+            maxHeight: "90vh", overflowY: "auto",
           }}
         >
           <button
             onClick={onClose}
+            aria-label="Close project details"
             style={{
               position: "absolute", top: "18px", right: "18px",
               width: "32px", height: "32px", borderRadius: "9999px",
@@ -183,8 +178,66 @@ function ProjectModal({
   );
 }
 
+// ── Image with gradient fallback (for missing project screenshots) ─────────────
+function ProjectImage({
+  src,
+  alt,
+  accent,
+  fill = false,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  accent: string;
+  fill?: boolean;
+  sizes?: string;
+}) {
+  const [failed, setFailed] = useState(false);
 
-// ── PinCard ───────────────────────────────────────────────────────────────────
+  if (failed) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          background: `linear-gradient(135deg, ${accent}22 0%, transparent 60%), linear-gradient(225deg, ${accent}15 0%, transparent 60%)`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={accent}
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ opacity: 0.35 }}
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="m21 15-5-5L5 21" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      className="object-cover object-top"
+      sizes={sizes}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+// ── Desktop PinCard ───────────────────────────────────────────────────────────
 function PinCard({
   project,
   onOpenModal,
@@ -197,69 +250,71 @@ function PinCard({
   return (
     <div
       className="h-full flex items-center justify-center"
-      style={{
-        width: `${CARD_WIDTH}px`,
-        flexShrink: 0,
-        paddingInline: "12px",
-        paddingRight: "10px",
-      }}
+      style={{ width: `${CARD_WIDTH}px`, flexShrink: 0, paddingInline: "12px", paddingRight: "10px" }}
     >
+      {/*
+       * paddingTop reserves visible space for the floating "Read More" label
+       * which lives 118 px above the card inside PinContainer.
+       */}
       <div
         className="relative cursor-pointer w-full"
-        style={{ maxWidth: "420px", width: "100%" }}
+        style={{ maxWidth: "380px", width: "100%", paddingTop: "140px" }}
         onClick={onOpenModal}
       >
-        <PinContainer
-          title="Read More"
-          accentColor={project.accent}
-          onHoverChange={setHovered}
-        >
-          {/* Card body */}
+        <PinContainer title="Read More" accentColor={project.accent} onHoverChange={setHovered}>
           <div
             style={{
-              background: "#0e0c1a",
-              borderRadius: "18px",
+              background: "#0e0c1a", borderRadius: "18px",
               border: `1px solid ${hovered ? project.accent + "55" : project.accent + "22"}`,
-              height: "460px",
-              overflow: "hidden",
-              display: "flex",
-              flexDirection: "column",
+              minHeight: "400px", height: "100%", overflow: "hidden",
+              display: "flex", flexDirection: "column",
               transformStyle: "preserve-3d",
-              boxShadow: hovered
-                ? `0 40px 80px ${project.accent}30`
-                : "0 8px 24px rgba(0,0,0,.55)",
+              boxShadow: hovered ? `0 40px 80px ${project.accent}30` : "0 8px 24px rgba(0,0,0,.55)",
               transition: "border-color 0.3s ease, box-shadow 0.4s ease",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none",
-                opacity: hovered ? 1 : 0,
-                transition: "opacity .4s ease",
-                background: `radial-gradient(circle at center, ${project.accent}22, transparent 70%)`,
-              }}
-            />
+            {/* Ambient glow overlay */}
+            <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: hovered ? 1 : 0, transition: "opacity .4s ease", background: `radial-gradient(circle at 50% 0%, ${project.accent}28, transparent 65%)` }} />
 
-            {/* Accent top strip */}
+            {/* Concentric ripple rings where pin meets card — matches Aceternity reference */}
+            {hovered && (
+              <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", pointerEvents: "none", zIndex: 5 }}>
+                {[28, 52, 76].map((r, i) => (
+                  <div
+                    key={r}
+                    style={{
+                      position: "absolute",
+                      top: `${-r / 2}px`,
+                      left: `${-r / 2}px`,
+                      width: `${r}px`,
+                      height: `${r}px`,
+                      borderRadius: "50%",
+                      border: `1px solid ${project.accent}${i === 0 ? "60" : i === 1 ? "35" : "18"}`,
+                      pointerEvents: "none",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
             <div style={{ height: "2px", background: `linear-gradient(90deg, ${project.accent}, transparent 70%)`, flexShrink: 0 }} />
 
-            {/* Image */}
+            {/* Image with gradient fallback */}
             <div
               className="relative flex-shrink-0"
               style={{
-                height: "240px",
-                transform: hovered ? "translateZ(40px)" : "translateZ(0px)",
+                height: "clamp(150px, 18vw, 200px)",
+                transform: hovered ? "translateZ(100px)" : "translateZ(0px)",
                 transition: "transform .4s ease",
+                background: `linear-gradient(135deg, ${project.accent}18, transparent)`,
               }}
             >
-              <Image
+              <ProjectImage
                 src={project.image}
                 alt={project.title}
+                accent={project.accent}
                 fill
-                className="object-cover object-top"
-                sizes={`${CARD_WIDTH}px`}
+                sizes="(max-width: 1024px) 100vw, 320px"
               />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 40%, #0e0c1a 100%)" }} />
               <div style={{ position: "absolute", bottom: "10px", left: "14px", right: "14px", display: "flex", justifyContent: "space-between", zIndex: 2 }}>
@@ -272,42 +327,26 @@ function PinCard({
               </div>
             </div>
 
-            {/* Text content */}
             <div className="flex flex-col flex-1" style={{ padding: "14px 16px 16px" }}>
               <h3
                 className="font-serif text-white font-normal tracking-tight mb-1.5"
-                style={{
-                  fontSize: "clamp(17px, 2.2vw, 26px)",
-                  lineHeight: 1.1,
-                  transform: hovered ? "translateZ(60px)" : "translateZ(0px)",
-                  transition: "transform .4s ease",
-                }}
+                style={{ fontSize: "clamp(15px, 1.8vw, 22px)", lineHeight: 1.1, transform: hovered ? "translateZ(70px)" : "translateZ(0px)", transition: "transform .4s ease" }}
               >
                 {project.title}
               </h3>
               <p
-                style={
-                  {
-                    fontSize: "12px",
-                    color: "rgba(255,255,255,0.52)",
-                    lineHeight: 1.6,
-                    flex: 1,
-                    overflow: "hidden",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                  } as React.CSSProperties
-                }
+                style={{ fontSize: "12px", color: "rgba(255,255,255,0.52)", lineHeight: 1.6, transform: hovered ? "translateZ(30px)" : "translateZ(0px)", transition: "transform .4s ease", flex: 1, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical" } as React.CSSProperties}
               >
                 {project.description}
               </p>
-
               <div style={{ height: "1px", background: "rgba(255,255,255,0.07)", margin: "10px 0 8px" }} />
-
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-wrap gap-1">
                   {project.stack.slice(0, 3).map((s) => (
-                    <span key={s} style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "8.5px", padding: "2px 8px", borderRadius: "9999px", background: `${project.accent}12`, border: `1px solid ${project.accent}28`, color: project.accent, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                    <span
+                      key={s}
+                      style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "8.5px", padding: "2px 8px", borderRadius: "9999px", background: `${project.accent}12`, border: `1px solid ${project.accent}28`, color: project.accent, textTransform: "uppercase", letterSpacing: "0.07em", transform: hovered ? "translateZ(40px)" : "translateZ(0px)", transition: "transform .4s ease" }}
+                    >
                       {s}
                     </span>
                   ))}
@@ -320,6 +359,7 @@ function PinCard({
                 <a
                   href={project.github}
                   onClick={(e) => e.stopPropagation()}
+                  aria-label={`${project.title} source code`}
                   className="flex-shrink-0 hover:scale-110 transition-transform duration-200"
                   style={{ width: "32px", height: "32px", borderRadius: "9999px", background: `${project.accent}15`, border: `1px solid ${project.accent}30`, display: "flex", alignItems: "center", justifyContent: "center", color: project.accent }}
                 >
@@ -336,234 +376,190 @@ function PinCard({
   );
 }
 
+// ── Mobile/Tablet Project Card ────────────────────────────────────────────────
+function MobileProjectCard({
+  project,
+  onOpenModal,
+}: {
+  project: (typeof PROJECTS)[0];
+  onOpenModal: () => void;
+}) {
+  return (
+    <article
+      onClick={onOpenModal}
+      className="cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
+      style={{
+        background: "#0e0c1a",
+        border: `1px solid ${project.accent}28`,
+        boxShadow: `0 4px 20px ${project.accent}12`,
+      }}
+    >
+      <div style={{ height: "2px", background: `linear-gradient(90deg, ${project.accent}, transparent 70%)` }} />
+
+      <div
+        className="relative"
+        style={{
+          height: "clamp(140px, 40vw, 200px)",
+          background: `linear-gradient(135deg, ${project.accent}18, transparent)`,
+        }}
+      >
+        <ProjectImage
+          src={project.image}
+          alt={project.title}
+          accent={project.accent}
+          fill
+          sizes="(max-width: 640px) 100vw, 50vw"
+        />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 40%, #0e0c1a 100%)" }} />
+        <div style={{ position: "absolute", bottom: "10px", right: "14px" }}>
+          <span style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "9px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            {project.category} · {project.year}
+          </span>
+        </div>
+      </div>
+
+      <div className="p-5">
+        <h3 className="font-serif text-white font-normal mb-2" style={{ fontSize: "clamp(18px, 4vw, 22px)", lineHeight: 1.1 }}>
+          {project.title}
+        </h3>
+        <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.52)", lineHeight: 1.6, marginBottom: "14px" }}>
+          {project.description}
+        </p>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-1.5">
+            {project.stack.slice(0, 3).map((s) => (
+              <span key={s} style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "9px", padding: "3px 9px", borderRadius: "9999px", background: `${project.accent}14`, border: `1px solid ${project.accent}30`, color: project.accent, letterSpacing: "0.06em" }}>
+                {s}
+              </span>
+            ))}
+          </div>
+          <span className="flex-shrink-0 text-[11px] font-mono tracking-wider" style={{ color: project.accent, opacity: 0.8 }}>
+            View →
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 // ── Projects Section ──────────────────────────────────────────────────────────
 export function Projects() {
   const outerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-
   const [maxTranslate, setMaxTranslate] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [activeProject, setActiveProject] =
-    useState<(typeof PROJECTS)[0] | null>(null);
+  const [activeProject, setActiveProject] = useState<(typeof PROJECTS)[0] | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: outerRef,
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, -maxTranslate]
-  );
+  const x = useTransform(scrollYProgress, [0, 1], [0, -maxTranslate]);
 
-  useMotionValueEvent(
-    scrollYProgress,
-    "change",
-    (v) => {
-      setCurrentIdx(
-        Math.round(
-          v * (PROJECTS.length - 1)
-        )
-      );
-    }
-  );
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    setCurrentIdx(Math.round(v * (PROJECTS.length - 1)));
+  });
 
   useLayoutEffect(() => {
     const calculate = () => {
       if (!trackRef.current) return;
-
-      const trackWidth =
-        trackRef.current.scrollWidth;
-
-      const visibleWidth =
-        Math.min(
-          window.innerWidth,
-          CONTAINER_WIDTH
-        );
-
-      setMaxTranslate(
-        Math.max(
-          trackWidth - visibleWidth,
-          0
-        )
-      );
+      const trackWidth = trackRef.current.scrollWidth;
+      const visibleWidth = trackRef.current.parentElement?.clientWidth ?? window.innerWidth;
+      setMaxTranslate(Math.max(trackWidth - visibleWidth, 0));
     };
-
     calculate();
-
-    window.addEventListener(
-      "resize",
-      calculate
-    );
-
-    return () =>
-      window.removeEventListener(
-        "resize",
-        calculate
-      );
+    window.addEventListener("resize", calculate);
+    return () => window.removeEventListener("resize", calculate);
   }, []);
 
   return (
     <>
-      <section
-        id="projects"
-        ref={outerRef}
-        style={{
-          height: `${PROJECTS.length * 120}vh`,
-        }}
-        className="relative bg-[#050508]"
-      >
+      {/*
+       * Single <section id="projects"> — the nav anchor is always here.
+       * Inside:
+       *   - div.hidden.lg:block  → desktop scroll-driven horizontal (480vh)
+       *   - div.lg:hidden        → mobile / tablet static grid
+       * Only one of these is ever visible at any viewport width.
+       */}
+      <section id="projects" className="bg-[#050508]">
+
+        {/* ── Desktop: scroll-driven horizontal ── */}
         <div
-          className="
-            sticky
-            top-0
-            h-screen
-            overflow-hidden
-            flex
-            flex-col
-          "
+          ref={outerRef}
+          className="hidden lg:block"
+          style={{ height: `${PROJECTS.length * 120}vh` }}
         >
-          <div className="pt-28 pb-10">
-            <div
-              className="mx-auto px-6"
-              style={{
-                maxWidth:
-                  `${CONTAINER_WIDTH}px`,
-              }}
-            >
-              <SectionLabel
-                index="04"
-                label="Selected Work"
-              />
+          <div className="sticky top-0 h-screen flex flex-col" style={{ overflowX: "clip" }}>
+            <div className="pt-28 pb-10">
+              <div className="mx-auto px-6" style={{ maxWidth: `${CONTAINER_WIDTH}px` }}>
+                <SectionLabel index="04" label="Selected Work" />
+                <div className="flex items-end justify-between mt-4">
+                  <h2 className="font-serif text-white font-normal leading-none" style={{ fontSize: "clamp(48px,6vw,88px)" }}>
+                    Things I&apos;ve{" "}
+                    <span className="grad-text italic">built.</span>
+                  </h2>
+                  <div style={{ fontFamily: "var(--font-jetbrains-mono)", fontSize: "11px", color: "rgba(255,255,255,.45)", letterSpacing: ".18em" }}>
+                    {String(currentIdx + 1).padStart(2, "0")} / {String(PROJECTS.length).padStart(2, "0")}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <div className="flex items-end justify-between mt-4">
-                <h2
-                  className="
-                    font-serif
-                    text-white
-                    font-normal
-                    leading-none
-                  "
-                  style={{
-                    fontSize:
-                      "clamp(48px,6vw,88px)",
-                  }}
-                >
-                  Things I&apos;ve{" "}
-                  <span
-                    style={{
-                      color:
-                        "var(--accent-primary)",
-                    }}
-                  >
-                    built.
-                  </span>
-                </h2>
+            <div className="flex-1 flex items-center" style={{ overflowX: "clip", overflowY: "visible" }}>
+              <div className="mx-auto w-full" style={{ maxWidth: `${CONTAINER_WIDTH}px` }}>
+                <motion.div ref={trackRef} style={{ x, display: "flex", gap: `${GAP}px` }}>
+                  {PROJECTS.map((project) => (
+                    <PinCard
+                      key={project.num}
+                      project={project}
+                      onOpenModal={() => setActiveProject(project)}
+                    />
+                  ))}
+                </motion.div>
+              </div>
+            </div>
 
-                <div
-                  style={{
-                    fontFamily:
-                      "var(--font-jetbrains-mono)",
-                    fontSize: "11px",
-                    color:
-                      "rgba(255,255,255,.45)",
-                    letterSpacing:
-                      ".18em",
-                  }}
-                >
-                  {String(
-                    currentIdx + 1
-                  ).padStart(2, "0")}
-                  {" / "}
-                  {String(
-                    PROJECTS.length
-                  ).padStart(2, "0")}
+            <div className="pb-8">
+              <div className="mx-auto px-6" style={{ maxWidth: `${CONTAINER_WIDTH}px` }}>
+                <div style={{ height: "2px", background: "rgba(255,255,255,.08)", borderRadius: "9999px", overflow: "hidden" }}>
+                  <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "left", height: "100%", background: "linear-gradient(90deg,#a78bfa,#f472b6)" }} />
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex-1 flex items-center overflow-hidden">
-            <div
-              className="
-                mx-auto
-                w-full
-              "
-              style={{
-                maxWidth:
-                  `${CONTAINER_WIDTH}px`,
-              }}
+        {/* ── Mobile / Tablet: static grid ── */}
+        <div className="lg:hidden py-32">
+          <div className="max-w-5xl mx-auto px-6">
+            <SectionLabel index="04" label="Selected Work" />
+            <h2
+              className="font-serif text-white font-normal leading-none mt-4 mb-12"
+              style={{ fontSize: "clamp(40px,8vw,72px)" }}
             >
-              <motion.div
-                ref={trackRef}
-                style={{
-                  x,
-                  display: "flex",
-                  gap: `${GAP}px`,
-                }}
-              >
-                {PROJECTS.map(
-                  (project) => (
-                    <PinCard
-                      key={project.num}
-                      project={project}
-                      onOpenModal={() =>
-                        setActiveProject(
-                          project
-                        )
-                      }
-                    />
-                  )
-                )}
-              </motion.div>
-            </div>
-          </div>
-
-          <div className="pb-8">
-            <div
-              className="mx-auto px-6"
-              style={{
-                maxWidth:
-                  `${CONTAINER_WIDTH}px`,
-              }}
-            >
-              <div
-                style={{
-                  height: "2px",
-                  background:
-                    "rgba(255,255,255,.08)",
-                  borderRadius:
-                    "9999px",
-                  overflow: "hidden",
-                }}
-              >
-                <motion.div
-                  style={{
-                    scaleX:
-                      scrollYProgress,
-                    transformOrigin:
-                      "left",
-                    height: "100%",
-                    background:
-                      "linear-gradient(90deg,#a78bfa,#f472b6)",
-                  }}
+              Things I&apos;ve{" "}
+              <span className="grad-text italic">built.</span>
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {PROJECTS.map((project) => (
+                <MobileProjectCard
+                  key={project.num}
+                  project={project}
+                  onOpenModal={() => setActiveProject(project)}
                 />
-              </div>
+              ))}
             </div>
           </div>
         </div>
+
       </section>
 
       <AnimatePresence>
         {activeProject && (
           <ProjectModal
             project={activeProject}
-            onClose={() =>
-              setActiveProject(
-                null
-              )
-            }
+            onClose={() => setActiveProject(null)}
           />
         )}
       </AnimatePresence>

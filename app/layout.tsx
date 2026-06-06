@@ -24,39 +24,95 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://riya.dev";
+
 export const metadata: Metadata = {
-  title: "Riya — Software Developer & Full Stack Engineer",
+  metadataBase: new URL(SITE_URL),
+  title: "Riya — Full Stack Engineer & Angular Developer · Noida, India",
   description:
-    "Software Developer specializing in scalable web platforms, Angular, React, Node.js, and AI-powered systems. Based in New Delhi, India.",
+    "Frontend / Full Stack Developer with 1.5+ years building SaaS platforms and AI-powered systems. Specialising in Angular, React, TypeScript, Node.js, and Python. Based in Noida, India.",
   keywords: [
     "Riya",
-    "Software Developer",
     "Full Stack Engineer",
     "Angular Developer",
     "React Developer",
-    "AI/ML Engineer",
-    "New Delhi",
+    "TypeScript",
+    "Node.js",
+    "AI Engineer",
+    "SaaS Developer",
+    "Noida",
     "India",
   ],
-  authors: [{ name: "Riya G." }],
-  creator: "Riya G.",
+  authors: [{ name: "Riya" }],
+  creator: "Riya",
   openGraph: {
     type: "website",
     locale: "en_IN",
-    title: "Riya — Software Developer & Full Stack Engineer",
+    url: SITE_URL,
+    title: "Riya — Full Stack Engineer & Angular Developer",
     description:
-      "Building scalable web platforms and AI-powered systems with modern engineering practices.",
+      "1.5+ years shipping SaaS platforms and AI-powered features with Angular, TypeScript, Node.js, and React.",
     siteName: "Riya Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Riya — Software Developer",
-    description: "Building scalable web platforms and AI-powered systems.",
+    title: "Riya — Full Stack Engineer & Angular Developer",
+    description: "Building SaaS platforms and AI-powered systems with Angular, TypeScript, and Node.js.",
   },
   robots: {
     index: true,
     follow: true,
   },
+  alternates: {
+    canonical: SITE_URL,
+  },
+};
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Riya",
+  jobTitle: "Associate Software Developer",
+  description:
+    "Frontend / Full Stack Developer with 1.5+ years building SaaS platforms and AI-powered systems using Angular, TypeScript, Node.js, and React.",
+  url: SITE_URL,
+  email: "riyasushma2019@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Noida",
+    addressRegion: "Uttar Pradesh",
+    addressCountry: "IN",
+  },
+  alumniOf: {
+    "@type": "EducationalOrganization",
+    name: "Dr. APJ Abdul Kalam Technical University",
+  },
+  knowsAbout: [
+    "Angular",
+    "React",
+    "TypeScript",
+    "Node.js",
+    "Python",
+    "GCP",
+    "RAG",
+    "Flask",
+    "MongoDB",
+    "PostgreSQL",
+    "Docker",
+  ],
+  hasCredential: [
+    {
+      "@type": "EducationalOccupationalCredential",
+      name: "Professional Certificate in Generative AI and Machine Learning",
+      educationalLevel: "Professional Certificate",
+      recognizedBy: { "@type": "Organization", name: "IIT Guwahati" },
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      name: "Python for Data Science",
+      recognizedBy: { "@type": "Organization", name: "IBM" },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -66,8 +122,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+      </head>
       <body
         className={`${plusJakartaSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         {children}
       </body>

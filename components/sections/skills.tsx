@@ -10,6 +10,12 @@ import {
   SiNumpy,
   SiTypescript,
   SiNextdotjs,
+  SiAngular,
+  SiLaravel,
+  SiDocker,
+  SiGooglecloud,
+  SiGraphql,
+  SiPostgresql,
 } from "react-icons/si";
 import { FaNodeJs, FaBootstrap, FaHtml5, FaCss3Alt, FaPython } from "react-icons/fa";
 import { DiMysql } from "react-icons/di";
@@ -18,20 +24,31 @@ import { AnimateIn } from "@/components/ui/animate-in";
 import { SectionLabel } from "@/components/ui/section-label";
 
 const SKILLS = [
-  { name: "React",      icon: RiReactjsLine,   color: "#22d3ee" },
-  { name: "MongoDB",    icon: SiMongodb,        color: "#22c55e" },
-  { name: "Node.js",    icon: FaNodeJs,         color: "#4ade80" },
-  { name: "JavaScript", icon: IoLogoJavascript, color: "#facc15" },
-  { name: "TypeScript", icon: SiTypescript,     color: "#60a5fa" },
-  { name: "Python",     icon: FaPython,         color: "#fbbf24" },
-  { name: "Bootstrap",  icon: FaBootstrap,      color: "#a78bfa" },
-  { name: "Express",    icon: SiExpress,        color: "#f59e0b" },
-  { name: "HTML5",      icon: FaHtml5,          color: "#f97316" },
-  { name: "CSS3",       icon: FaCss3Alt,        color: "#38bdf8" },
-  { name: "Redux",      icon: SiRedux,          color: "#c084fc" },
-  { name: "NumPy",      icon: SiNumpy,          color: "#60a5fa" },
-  { name: "MySQL",      icon: DiMysql,          color: "#fb923c" },
-  { name: "Next.js",    icon: SiNextdotjs,      color: "#e5e7eb" },
+  // Primary production technologies (front-loaded)
+  { name: "Angular",     icon: SiAngular,        color: "#DD0031" },
+  { name: "React",       icon: RiReactjsLine,    color: "#22d3ee" },
+  { name: "TypeScript",  icon: SiTypescript,     color: "#3178C6" },
+  { name: "Node.js",     icon: FaNodeJs,         color: "#339933" },
+  { name: "Python",      icon: FaPython,         color: "#3776AB" },
+  // Backend & databases
+  { name: "MongoDB",     icon: SiMongodb,        color: "#47A248" },
+  { name: "PostgreSQL",  icon: SiPostgresql,     color: "#336791" },
+  { name: "MySQL",       icon: DiMysql,          color: "#fb923c" },
+  // AI / ML
+  { name: "GraphQL",     icon: SiGraphql,        color: "#E10098" },
+  { name: "NumPy",       icon: SiNumpy,          color: "#60a5fa" },
+  // Frontend utilities
+  { name: "JavaScript",  icon: IoLogoJavascript, color: "#F7DF1E" },
+  { name: "Next.js",     icon: SiNextdotjs,      color: "#e5e7eb" },
+  { name: "Redux",       icon: SiRedux,          color: "#764ABC" },
+  { name: "Bootstrap",   icon: FaBootstrap,      color: "#a78bfa" },
+  { name: "HTML5",       icon: FaHtml5,          color: "#E34F26" },
+  { name: "CSS3",        icon: FaCss3Alt,        color: "#1572B6" },
+  // Infrastructure & backend frameworks
+  { name: "Docker",      icon: SiDocker,         color: "#2496ED" },
+  { name: "GCP",         icon: SiGooglecloud,    color: "#4285F4" },
+  { name: "Laravel",     icon: SiLaravel,        color: "#FF2D20" },
+  { name: "Express",     icon: SiExpress,        color: "#f59e0b" },
 ];
 
 function SkillCard({
@@ -44,8 +61,11 @@ function SkillCard({
   color: string;
 }) {
   const [hovered, setHovered] = useState(false);
+
   return (
     <div
+      role="img"
+      aria-label={name}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -67,20 +87,24 @@ function SkillCard({
       }}
     >
       <Icon
+        aria-hidden="true"
         style={{
           fontSize: "52px",
-          color: hovered ? color : "rgba(255,255,255,0.4)",
-          transition: "color 0.25s ease",
+          color: color,
+          opacity: hovered ? 1 : 0.55,
+          filter: hovered ? `drop-shadow(0 0 10px ${color}90)` : "none",
+          transition: "opacity 0.25s ease, filter 0.25s ease",
         }}
       />
       <span
         style={{
           fontFamily: "var(--font-jetbrains-mono)",
           fontSize: "11px",
-          color: hovered ? color : "rgba(255,255,255,0.38)",
+          color: color,
+          opacity: hovered ? 1 : 0.55,
           fontWeight: 600,
           letterSpacing: "0.06em",
-          transition: "color 0.25s ease",
+          transition: "opacity 0.25s ease",
           textAlign: "center",
         }}
       >
@@ -102,7 +126,11 @@ export function Skills() {
         </AnimateIn>
       </div>
 
-      <div className="px-6 container mx-auto max-w-6xl">
+      <div
+        className="px-6 container mx-auto max-w-6xl"
+        role="region"
+        aria-label="Technologies I work with"
+      >
         <Marquee speed={50} pauseOnHover gradient={false}>
           {SKILLS.map((skill) => (
             <SkillCard key={skill.name} {...skill} />

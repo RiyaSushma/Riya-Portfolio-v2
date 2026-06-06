@@ -9,12 +9,12 @@ export const nav = [
 export const hero = {
   greeting: "Hi, I'm",
   name: "Riya",
-  roles: ["Software Developer", "Full Stack Engineer", "AI/ML Enthusiast", "Angular Developer"],
-  tagline: "Building scalable web platforms and AI-powered systems with modern engineering practices.",
+  roles: ["Software Developer", "Full Stack Engineer", "AI/ML Engineer", "Angular Developer"],
+  tagline: "1.5+ years shipping SaaS platforms and AI-powered features with Angular, TypeScript, Node.js, and React.",
   location: "Noida, India",
-  email: "riyag0105@gmail.com",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
+  email: "riyasushma2019@gmail.com",
+  github: "https://github.com", // TODO: replace with actual GitHub profile URL
+  linkedin: "https://linkedin.com", // TODO: replace with actual LinkedIn profile URL
   available: true,
 };
 
@@ -25,10 +25,10 @@ export const about = {
     "My work spans OAuth workflows, Shopify integrations, retrieval-augmented generation (RAG) systems, and scalable component architectures. I care about code that ships reliably and systems that can grow.",
   ],
   stats: [
-    { label: "Years coding", value: "4+" },
-    { label: "Production apps", value: "10+" },
-    { label: "Tech stacks", value: "8" },
-    { label: "Open to", value: "Roles" },
+    { label: "Experience", value: "1.5+ yrs" },
+    { label: "Companies", value: "3" },
+    { label: "Technologies", value: "20+" },
+    { label: "Open to", value: "SWE Roles" },
   ],
 };
 
